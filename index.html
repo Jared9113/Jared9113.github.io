@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> </title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Raleway:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ===================== CSS VARIABLES ===================== */
+    :root {
+      --bg-primary: #f8f5ff;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --text-primary: #2d1b69;
+      --text-secondary: #6b5b95;
+      --text-muted: #9b8ec4;
+      --accent-1: #7c5cbf;
+      --accent-2: #a78bda;
+      --accent-3: #c9b8f0;
+      --accent-soft: #ede9ff;
+      --border: rgba(124, 92, 191, 0.2);
+      --shadow-sm: 0 4px 20px rgba(124, 92, 191, 0.12);
+      --shadow-md: 0 8px 40px rgba(124, 92, 191, 0.18);
+      --shadow-lg: 0 16px 60px rgba(124, 92, 191, 0.25);
+      --gradient-main: linear-gradient(135deg, #7c5cbf 0%, #a78bda 50%, #c9b8f0 100%);
+      --gradient-soft: linear-gradient(135deg, #f8f5ff 0%, #ede9ff 100%);
+      --gradient-card: linear-gradient(145deg, #ffffff, #f5f0ff);
+      --nav-bg: rgba(255, 255, 255, 0.92);
+      --timeline-line: #c9b8f0;
+      --heart-color: #e879a0;
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #0f0a1e;
+      --bg-secondary: #1a1030;
+      --bg-card: #1e1535;
+      --text-primary: #e8e0ff;
+      --text-secondary: #b8a8e0;
+      --text-muted: #7a6aaa;
+      --accent-1: #9b7fd4;
+      --accent-2: #c4a8f0;
+      --accent-3: #6b4fa8;
+      --accent-soft: #2a1f4a;
+      --border: rgba(155, 127, 212, 0.25);
+      --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 8px 40px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 16px 60px rgba(0, 0, 0, 0.6);
+      --gradient-main: linear-gradient(135deg, #4a2f8a 0%, #7c5cbf 50%, #9b7fd4 100%);
+      --gradient-soft: linear-gradient(135deg, #1a1030 0%, #2a1f4a 100%);
+      --gradient-card: linear-gradient(145deg, #1e1535, #2a1f4a);
+      --nav-bg: rgba(15, 10, 30, 0.95);
+      --timeline-line: #4a3080;
+    }
+
+    /* ===================== RESET & BASE ===================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Raleway', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: var(--transition);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ===================== FLOATING HEARTS BG ===================== */
+    .hearts-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .heart-particle {
+      position: absolute;
+      width: 12px; height: 12px;
+      opacity: 0;
+      animation: floatHeart linear infinite;
+    }
+    .heart-particle::before,
+    .heart-particle::after {
+      content: '';
+      position: absolute;
+      width: 12px; height: 12px;
+      background: var(--heart-color);
+      border-radius: 12px 12px 0 0;
+      opacity: 0.15;
+    }
+    .heart-particle::before { transform: rotate(-45deg); transform-origin: 0 100%; }
+    .heart-particle::after  { left: 8px; transform: rotate(45deg); transform-origin: 100% 100%; }
+
+    @keyframes floatHeart {
+      0%   { transform: translateY(110vh) scale(0.5); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 0.4; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* ===================== NAVIGATION ===================== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: var(--nav-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      transition: var(--transition);
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+    }
+    .nav-logo {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: var(--gradient-main);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+    }
+    .nav-tab {
+      position: relative;
+    }
+    .nav-tab button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      padding: 8px 18px;
+      border-radius: 50px;
+      transition: var(--transition);
+      letter-spacing: 0.3px;
+    }
+    .nav-tab button:hover {
+      background: var(--accent-soft);
+      color: var(--accent-1);
+      transform: translateY(-1px);
+    }
+    .nav-tab button.active {
+      background: var(--gradient-main);
+      color: white;
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .theme-toggle {
+      width: 52px; height: 28px;
+      background: var(--accent-soft);
+      border: 2px solid var(--border);
+      border-radius: 50px;
+      cursor: pointer;
+      position: relative;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover { border-color: var(--accent-1); }
+    .theme-toggle-knob {
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--gradient-main);
+      transition: var(--transition);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    [data-theme="dark"] .theme-toggle-knob { transform: translateX(24px); }
+    .theme-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--accent-1);
+      border-radius: 4px;
+      transition: var(--transition);
+    }
+
+    /* ===================== MOBILE NAV ===================== */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 70px; left: 0; right: 0;
+      background: var(--nav-bg);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      z-index: 999;
+      flex-direction: column;
+      gap: 8px;
+      transform: translateY(-20px);
+      opacity: 0;
+      transition: var(--transition);
+    }
+    .mobile-nav.open {
+      display: flex;
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .mobile-nav button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Raleway', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      padding: 12px 18px;
+      border-radius: 12px;
+      text-align: left;
+      transition: var(--transition);
+    }
+    .mobile-nav button.active,
+    .mobile-nav button:hover {
+      background: var(--accent-soft);
+      color: var(--accent-1);
+    }
+
+    /* ===================== MAIN CONTENT ===================== */
+    main {
+      position: relative;
+      z-index: 1;
+      padding-top: 70px;
+    }
+    .tab-panel {
+      display: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .tab-panel.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===================== SECTION SYSTEM ===================== */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+    .section-full {
+      width: 100%;
+      padding: 80px 24px;
+    }
+    .section-hero {
+      background: var(--gradient-soft);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ===================== HERO (HOME) ===================== */
+    .hero {
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg-orbs {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      animation: orbFloat 8s ease-in-out infinite alternate;
+    }
+    .orb-1 { width: 400px; height: 400px; background: radial-gradient(circle, #c9b8f0, #7c5cbf); top: -100px; left: -100px; animation-delay: 0s; }
+    .orb-2 { width: 300px; height: 300px; background: radial-gradient(circle, #fbc8dd, #e879a0); top: 50%; right: -80px; animation-delay: 2s; }
+    .orb-3 { width: 250px; height: 250px; background: radial-gradient(circle, #b8d4f0, #5c9abf); bottom: -60px; left: 30%; animation-delay: 4s; }
+
+    @keyframes orbFloat {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(30px, -30px) scale(1.1); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+    .hero-subtitle {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.4rem;
+      color: var(--accent-2);
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease forwards 0.3s;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -1px;
+      background: var(--gradient-main);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease forwards 0.6s;
+    }
+    .hero-title em {
+      font-style: italic;
+      font-weight: 600;
+    }
+    .hero-desc {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.8;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease forwards 0.9s;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--gradient-main);
+      color: white;
+      border: none;
+      padding: 16px 36px;
+      border-radius: 50px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease forwards 1.2s;
+      letter-spacing: 0.5px;
+    }
+    .hero-cta:hover { transform: translateY(-4px) scale(1.04); box-shadow: var(--shadow-lg); }
+    .hero-cta:active { transform: translateY(-1px) scale(1.01); }
+
+    .hero-heart {
+      display: inline-block;
+      color: var(--heart-color);
+      font-size: 1.3rem;
+      animation: heartBeat 1.5s ease-in-out infinite;
+    }
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===================== SECTION PREVIEW CARDS ===================== */
+    .section-heading {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .section-label {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.2rem;
+      color: var(--accent-2);
+      display: block;
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+    .section-divider {
+      width: 60px; height: 3px;
+      background: var(--gradient-main);
+      border-radius: 4px;
+      margin: 0 auto 16px;
+    }
+    .section-desc {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      max-width: 540px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+    }
+    .preview-card {
+      background: var(--gradient-card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .preview-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent-3);
+    }
+    .preview-card-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      background: var(--gradient-soft);
+      position: relative;
+      overflow: hidden;
+    }
+    .preview-card-img .card-icon-svg {
+      width: 80px; height: 80px;
+      opacity: 0.4;
+    }
+    .preview-card-img .card-icon-svg path,
+    .preview-card-img .card-icon-svg circle {
+      fill: var(--accent-1);
+    }
+    .preview-card-body {
+      padding: 24px;
+    }
+    .preview-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+    .preview-card-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+    .preview-card-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-soft);
+      color: var(--accent-1);
+      border: 1px solid var(--border);
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .preview-card-btn:hover {
+      background: var(--gradient-main);
+      color: white;
+      border-color: transparent;
+      transform: translateX(4px);
+    }
+
+    /* ===================== TIMELINE ===================== */
+    .timeline-wrap {
+      position: relative;
+      padding: 20px 0;
+    }
+    .timeline-center-line {
+      position: absolute;
+      left: 50%;
+      top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, transparent, var(--timeline-line), transparent);
+      transform: translateX(-50%);
+      border-radius: 4px;
+    }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      gap: 0;
+      margin-bottom: 50px;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .timeline-item.visible { opacity: 1; transform: translateY(0) !important; }
+    .timeline-item:nth-child(odd)  { transform: translateY(30px); }
+    .timeline-item:nth-child(even) { transform: translateY(30px); }
+
+    .timeline-card {
+      background: var(--gradient-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px 26px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      position: relative;
+    }
+    .timeline-card:hover {
+      transform: scale(1.04);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent-3);
+    }
+    .timeline-item:nth-child(odd) .timeline-card  { grid-column: 1; text-align: right; }
+    .timeline-item:nth-child(even) .timeline-card { grid-column: 3; text-align: left; }
+    .timeline-item:nth-child(odd) .timeline-center  { grid-column: 2; }
+    .timeline-item:nth-child(even) .timeline-center { grid-column: 2; }
+    .timeline-item:nth-child(odd) .timeline-empty   { grid-column: 3; }
+    .timeline-item:nth-child(even) .timeline-empty  { grid-column: 1; }
+
+    .timeline-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+    .timeline-dot {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--gradient-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 6px var(--accent-soft), var(--shadow-sm);
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
+    .timeline-dot:hover { transform: scale(1.2); box-shadow: 0 0 0 10px var(--accent-soft), var(--shadow-md); }
+    .timeline-dot svg { width: 20px; height: 20px; }
+    .timeline-dot svg path { fill: white; }
+
+    .timeline-date {
+      font-family: 'Dancing Script', cursive;
+      font-size: 0.95rem;
+      color: var(--accent-2);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .timeline-event {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .timeline-detail {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .timeline-badge {
+      display: inline-block;
+      background: var(--gradient-main);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 50px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+
+    /* Mobile Timeline */
+    @media (max-width: 700px) {
+      .timeline-center-line { left: 24px; }
+      .timeline-item {
+        grid-template-columns: 48px 1fr;
+        grid-template-rows: auto;
+        gap: 0 16px;
+      }
+      .timeline-item:nth-child(odd) .timeline-card,
+      .timeline-item:nth-child(even) .timeline-card {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: left;
+      }
+      .timeline-item:nth-child(odd) .timeline-center,
+      .timeline-item:nth-child(even) .timeline-center {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      .timeline-item:nth-child(odd) .timeline-empty,
+      .timeline-item:nth-child(even) .timeline-empty {
+        display: none;
+      }
+      .timeline-center-line { left: 23px; }
+    }
+
+    /* ===================== GALLERY TAB ===================== */
+    .gallery-hero {
+      background: var(--gradient-soft);
+      padding: 100px 24px 70px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .slideshow-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 860px;
+      margin: 0 auto;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+    }
+    .slideshow-inner {
+      display: flex;
+      transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .slide {
+      min-width: 100%;
+      height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .slide-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: var(--gradient-soft);
+    }
+    .slide-placeholder svg { width: 80px; height: 80px; opacity: 0.3; }
+    .slide-placeholder svg path, .slide-placeholder svg circle, .slide-placeholder svg rect { fill: var(--accent-1); }
+    .slide-placeholder p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .slide img, .slide video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .slide-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 20px 28px;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      color: white;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-style: italic;
+    }
+
+    .slideshow-controls {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 16px;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .slide-btn {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: all;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .slide-btn:hover { transform: scale(1.12); box-shadow: var(--shadow-md); background: white; }
+    .slide-btn svg { width: 20px; height: 20px; }
+    .slide-btn svg path { stroke: var(--accent-1); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+    .slideshow-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 18px;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent-3);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .dot.active { background: var(--accent-1); transform: scale(1.4); }
+    .dot:hover { background: var(--accent-2); }
+
+    /* Video section */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .video-card {
+      background: var(--gradient-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .video-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
+    .video-placeholder {
+      width: 100%;
+      height: 200px;
+      background: var(--gradient-soft);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .video-placeholder svg { width: 56px; height: 56px; opacity: 0.35; }
+    .video-placeholder svg path { fill: var(--accent-1); }
+    .video-placeholder p { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
+    .video-card-body { padding: 18px; }
+    .video-card-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+    .video-card-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ===================== POEM TAB ===================== */
+    .poem-hero {
+      background: var(--gradient-soft);
+      padding: 100px 24px 70px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .poem-slideshow {
+      max-width: 720px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .poem-slides {
+      overflow: hidden;
+      border-radius: 28px;
+    }
+    .poem-track {
+      display: flex;
+      transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .poem-slide {
+      min-width: 100%;
+      background: var(--gradient-card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 52px 48px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .poem-number {
+      font-family: 'Dancing Script', cursive;
+      font-size: 0.95rem;
+      color: var(--accent-2);
+      margin-bottom: 16px;
+    }
+    .poem-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+    .poem-divider {
+      width: 40px; height: 2px;
+      background: var(--gradient-main);
+      border-radius: 4px;
+      margin: 16px auto 24px;
+    }
+    .poem-body {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 300;
+      line-height: 2;
+      color: var(--text-secondary);
+      white-space: pre-line;
+    }
+    .poem-dedication {
+      margin-top: 28px;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.1rem;
+      color: var(--accent-2);
+    }
+    .poem-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 28px;
+    }
+    .poem-btn {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      background: var(--gradient-card);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .poem-btn:hover { transform: scale(1.1); box-shadow: var(--shadow-md); background: var(--gradient-main); }
+    .poem-btn:hover svg path { stroke: white; }
+    .poem-btn svg { width: 18px; height: 18px; }
+    .poem-btn svg path { stroke: var(--accent-1); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .poem-counter {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      min-width: 60px;
+      text-align: center;
+    }
+    .poem-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    /* ===================== BOTTOM DECORATIVE BANNERS ===================== */
+    .bottom-banner {
+      width: 100%;
+      padding: 60px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: var(--gradient-main);
+      margin-top: 40px;
+    }
+    .bottom-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .bottom-banner-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300;
+      color: white;
+      position: relative;
+      margin-bottom: 12px;
+    }
+    .bottom-banner-sub {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.3rem;
+      color: rgba(255,255,255,0.8);
+      position: relative;
+      margin-bottom: 30px;
+    }
+    .bottom-banner-hearts {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      position: relative;
+    }
+    .bbh {
+      width: 10px; height: 10px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.5;
+      animation: heartBeat 1.5s ease-in-out infinite;
+    }
+    .bbh:nth-child(2) { animation-delay: 0.2s; opacity: 0.7; width: 14px; height: 14px; }
+    .bbh:nth-child(3) { animation-delay: 0.4s; opacity: 0.5; }
+
+    /* ===================== SCROLL ANIMATION ===================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ===================== UTILITY ===================== */
+    .text-center { text-align: center; }
+    .mb-8 { margin-bottom: 8px; }
+    .mb-16 { margin-bottom: 16px; }
+    .mb-32 { margin-bottom: 32px; }
+    .mb-56 { margin-bottom: 56px; }
+    .mt-32 { margin-top: 32px; }
+    .mt-48 { margin-top: 48px; }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 860px) {
+      .nav-tabs { display: none; }
+      .hamburger { display: flex; }
+      .slide { height: 300px; }
+      .poem-slide { padding: 36px 28px; }
+    }
+    @media (max-width: 520px) {
+      .slide { height: 240px; }
+      .poem-slide { padding: 28px 20px; }
+      .poem-body { font-size: 1rem; }
+    }
+
+    /* ===================== SCROLLBAR ===================== */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-3); border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-2); }
+
+    /* ===================== SELECTION ===================== */
+    ::selection { background: var(--accent-3); color: var(--text-primary); }
+
+    /* ==================== TAB PANEL TRANSITION ==================== */
+    .tab-panel { animation: none; }
+    .tab-panel.animating-in {
+      animation: tabFadeIn 0.5s ease forwards;
+    }
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating hearts background -->
+  <div class="hearts-bg" id="heartsContainer"></div>
+
+  <!-- ===================== NAVIGATION ===================== -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" onclick="showTab('home'); return false;">Jared &amp; Nina's Love Story</a>
+
+      <ul class="nav-tabs">
+        <li class="nav-tab"><button onclick="showTab('home')" class="active" id="tab-home">Home</button></li>
+        <li class="nav-tab"><button onclick="showTab('gallery')" id="tab-gallery">Gallery</button></li>
+        <li class="nav-tab"><button onclick="showTab('poems')" id="tab-poems">Poems</button></li>
+      </ul>
+
+      <div class="nav-right">
+        <span class="theme-label" id="themeLabel">Light</span>
+        <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">
+          <div class="theme-toggle-knob"></div>
+        </div>
+        <button class="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Nav -->
+  <div class="mobile-nav" id="mobileNav">
+    <button onclick="showTab('home'); closeMobileNav()" class="active" id="mob-tab-home">Home</button>
+    <button onclick="showTab('gallery'); closeMobileNav()" id="mob-tab-gallery">Gallery</button>
+    <button onclick="showTab('poems'); closeMobileNav()" id="mob-tab-poems">Poems</button>
+  </div>
+
+  <!-- ===================== MAIN ===================== -->
+  <main>
+
+    <!-- ==================== HOME TAB ==================== -->
+    <div class="tab-panel active" id="panel-home">
+
+      <!-- Hero -->
+      <section class="section-full section-hero hero">
+        <div class="hero-bg-orbs">
+          <div class="orb orb-1"></div>
+          <div class="orb orb-2"></div>
+          <div class="orb orb-3"></div>
+        </div>
+        <div class="hero-content">
+          <p class="hero-subtitle">A love story, written just for you, Alaru</p>
+          <h1 class="hero-title">To the one who<br/><em>owns my heart</em></h1>
+          <p class="hero-desc">
+            Every day with you is a chapter I never want to end.
+            This little corner of the internet is dedicated entirely to you —
+            to us, to our story.
+          </p>
+          <button class="hero-cta" onclick="document.getElementById('preview-section').scrollIntoView({behavior:'smooth'})">
+            Explore Our Love  Story
+            <span class="hero-heart">&#10084;</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Section Preview Cards -->
+      <section class="section" id="preview-section">  
+        <div class="section-heading reveal">
+          <span class="section-label">What awaits you my love</span>
+          <h2 class="section-title">Our Story in Three Chapters</h2>
+          <div class="section-divider"></div>
+          <p class="section-desc">Explore our gallery of memories, read poems written from the deepest parts of my heart, and relive the moments that define us.</p>
+        </div>
+
+        <div class="preview-grid">
+          <!-- Gallery Card -->
+          <div class="preview-card reveal reveal-delay-1" onclick="showTab('gallery')">
+            <div class="preview-card-img">
+              <svg class="card-icon-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <rect x="8" y="16" width="64" height="48" rx="6"/>
+                <circle cx="28" cy="34" r="8"/>
+                <path d="M8 52 L24 38 L38 50 L54 34 L72 52"/>
+              </svg>
+            </div>
+            <div class="preview-card-body">
+              <h3 class="preview-card-title">Our Gallery</h3>
+              <p class="preview-card-desc">An album of our most cherished and out-of-pocket moments — photographs and videos that capture the magic and chaotic-ness of us.</p>
+              <button class="preview-card-btn">View Gallery &rarr;</button>
+            </div>
+          </div>
+
+          <!-- Home Card (this page) -->
+          <div class="preview-card reveal reveal-delay-2">
+            <div class="preview-card-img">
+              <svg class="card-icon-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <path d="M40 12 C20 12, 8 28, 8 40 C8 58, 20 70, 40 70 C60 70, 72 58, 72 40 C72 28, 60 12, 40 12Z"/>
+                <path d="M40 28 C32 28, 24 36, 24 44 C24 54, 32 60, 40 60 C48 60, 56 54, 56 44 C56 36, 48 28, 40 28Z" fill="white" opacity="0.5"/>
+              </svg>
+            </div>
+            <div class="preview-card-body">
+              <h3 class="preview-card-title">Our Timeline</h3>
+              <p class="preview-card-desc">A roadmap of every milestone we have crossed together — from first hello to eternity.</p>
+              <button class="preview-card-btn" onclick="document.getElementById('timeline-section').scrollIntoView({behavior:'smooth'})">See our chronology &rarr;</button>
+            </div>
+          </div>
+
+          <!-- Poems Card -->
+          <div class="preview-card reveal reveal-delay-3" onclick="showTab('poems')">
+            <div class="preview-card-img">
+              <svg class="card-icon-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <rect x="16" y="10" width="48" height="60" rx="4"/>
+                <line x1="28" y1="28" x2="52" y2="28" stroke="white" stroke-width="2"/>
+                <line x1="28" y1="38" x2="52" y2="38" stroke="white" stroke-width="2"/>
+                <line x1="28" y1="48" x2="44" y2="48" stroke="white" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="preview-card-body">
+              <h3 class="preview-card-title">Love Poems</h3>
+              <p class="preview-card-desc">Words and excerpts that resonate with how I feel about you. Verses that pour straight from my soul — crafted with every ounce of love I carry for you.</p>
+              <button class="preview-card-btn">Dive into Poetry &rarr;</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Timeline Section -->
+      <section class="section-full" style="background: var(--gradient-soft); padding: 80px 24px;" id="timeline-section">
+        <div class="section" style="padding-top: 0; padding-bottom: 0;">
+          <div class="section-heading reveal">
+            <span class="section-label">Our journey</span>
+            <h2 class="section-title">Milestones of Our Love</h2>
+            <div class="section-divider"></div>
+            <p class="section-desc">Every great love story has its defining moments. Here are ours, treasured forever.</p>
+          </div>
+
+          <div class="timeline-wrap">
+            <div class="timeline-center-line"></div>
+
+            <!-- Timeline Item 1 -->
+            <div class="timeline-item">
+              <div class="timeline-card">
+                <span class="timeline-badge">The Beginning</span>
+                <div class="timeline-date">September 17, 2023</div>
+                <div class="timeline-event">The Day We Met</div>
+                <div class="timeline-detail">Ashley brought you to my room just to say hi. Little did I know this was the girl I would want to spend forever with.</div>
+              </div>
+              <div class="timeline-center">
+                <div class="timeline-dot">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="timeline-empty"></div>
+            </div>
+
+            <!-- Timeline Item 2 -->
+            <div class="timeline-item">
+              <div class="timeline-empty"></div>
+              <div class="timeline-center">
+                <div class="timeline-dot">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="timeline-card">
+                <span class="timeline-badge">Talking stage begins</span>
+                <div class="timeline-date">January 28, 2025</div>
+                <div class="timeline-event">"Okay, you win. Please come back to hostel"</div>
+                <div class="timeline-detail">Words that signified the start of our talking stage when she moved out of hostel.</div>
+              </div>
+            </div>
+
+            <!-- Timeline Item 3 -->
+            <div class="timeline-item">
+              <div class="timeline-card">
+                <span class="timeline-badge">Talking Stage continues</span>
+                <div class="timeline-date">February 01, 2025</div>
+                <div class="timeline-event">She shuts down the flirts</div>
+                <div class="timeline-detail">She says no to my flirts because this sem is for "locking in". However, she is open to what God throws her way.</div>
+              </div>
+              <div class="timeline-center">
+                <div class="timeline-dot">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="timeline-empty"></div>
+            </div>
+
+            <!-- Timeline Item 4 -->
+            <div class="timeline-item">
+              <div class="timeline-empty"></div>
+              <div class="timeline-center">
+                <div class="timeline-dot">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 6h-2.18c.07-.44.18-.86.18-1.3C18 2.57 15.43 0 12.28 0 10.62 0 9.12.69 8.1 1.87L6 4.04 3.9 1.87C2.88.69 1.38 0-.28 0 2.87 0 0 2.57 0 4.7c0 .44.11.86.18 1.3H-2c-1.1 0-1.99.9-1.99 2L-4 19c0 1.1.89 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7.72 13H4v-2h8.28v2zm3.72-4H4v-2h12v2zm0-4H4V9h12v2z"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="timeline-card">
+                <span class="timeline-badge">Talking Stage deepens</span>
+                <div class="timeline-date">February 05, 2025</div>
+                <div class="timeline-event">A deeper connection</div>
+                <div class="timeline-detail">I tell her I want a deeper connection with her: deeper that Light Yagami (anime) arguments.</div>
+              </div>
+            </div>
+
+            <!-- Timeline Item 5 -->
+            <div class="timeline-item">
+              <div class="timeline-card">
+                <span class="timeline-badge">Late night talks begin</span>
+                <div class="timeline-date">February 21, 2025</div>
+                <div class="timeline-event">Our first late night call</div>
+                <div class="timeline-detail">I couldn't sleep because of pain. I go to buy medicine at 3 am. When I come back, Nina is awake. She feels sad and she asks me to spend some time with her. She end up talking up to 5 am.</div>
+              </div>
+              <div class="timeline-center">
+                <div class="timeline-dot">  
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                </div>  
+              </div>
+              <div class="timeline-empty"></div>
+            </div>
+
+            <!-- Timeline Item 6 -->
+            <div class="timeline-item">
+              <div class="timeline-empty"></div>
+              <div class="timeline-center">
+                <div class="timeline-dot">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2zm1 14.5h-2v-2h2v2zm0-4h-2c0-3.25 3-3 3-5 0-1.1-.9-2-2-2s-2 .9-2 2h-2c0-2.21 1.79-4 4-4s4 1.79 4 4c0 2.5-3 2.75-3 5z"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="timeline-card">
+                <span class="timeline-badge">Today</span>
+                <div class="timeline-date">Todayyyyyyyy</div>
+                <div class="timeline-event">This Very Moment</div>
+                <div class="timeline-detail">And we are still here — still choosing each other, still growing, still smiling. The story continues, and it only gets better.</div>
+              </div>
+            </div>
+
+          </div><!-- end timeline-wrap -->
+        </div>
+      </section>
+
+      <!-- Home Bottom Banner -->
+      <div class="bottom-banner">
+        <div class="bottom-banner-title">Take me back to the night we met</div>
+        <div class="bottom-banner-sub"> ~ Lord Huron </div>
+        <div class="bottom-banner-hearts">
+          <div class="bbh"></div>
+          <div class="bbh"></div>
+          <div class="bbh"></div>
+        </div>
+      </div>
+
+    </div><!-- end HOME tab -->
+
+
+    <!-- ==================== GALLERY TAB ==================== -->
+    <div class="tab-panel" id="panel-gallery">
+
+      <section class="gallery-hero">
+        <span class="section-label">Moments frozen in time</span>
+        <h1 class="section-title" style="margin-bottom:16px;">Our Gallery</h1>
+        <div class="section-divider"></div>
+        <p class="section-desc">A picture is worth a thousand words — fancy I say them to you?</p>
+      </section>
+
+      <!-- Photo Slideshow -->
+      <section class="section">
+        <div class="section-heading reveal">
+          <span class="section-label">Photographs</span>
+          <h2 class="section-title">Captured Memories</h2>
+          <div class="section-divider"></div>
+        </div>
+
+        <div class="slideshow-wrap reveal">
+          <div class="slideshow-inner" id="photoTrack">
+
+            <!-- Slide 1: Replace src="" with your image path -->
+            <div class="slide">
+              <div class="slide-placeholder">
+                <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="8" y="16" width="64" height="48" rx="6" fill="none" stroke-width="3" style="stroke:var(--accent-1)"/>
+                  <circle cx="28" cy="34" r="8"/>
+                  <path d="M8 52 L24 38 L38 50 L54 34 L72 52" fill="none" stroke-width="2.5" style="stroke:var(--accent-1)"/>
+                </svg>
+                <p>Add your photo here &mdash; replace this slide with an img tag</p>
+              </div>
+              <div class="slide-caption">Memory One &mdash; Replace with a caption</div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="slide">
+              <div class="slide-placeholder">
+                <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="8" y="16" width="64" height="48" rx="6" fill="none" stroke-width="3" style="stroke:var(--accent-2)"/>
+                  <circle cx="52" cy="30" r="8"/>
+                  <path d="M8 64 L30 44 L46 56 L60 40 L72 64" fill="none" stroke-width="2.5" style="stroke:var(--accent-2)"/>
+                </svg>
+                <p>Add your photo here &mdash; replace this slide with an img tag</p>
+              </div>
+              <div class="slide-caption">Memory Two &mdash; Replace with a caption</div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="slide">
+              <div class="slide-placeholder">
+                <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="8" y="16" width="64" height="48" rx="6" fill="none" stroke-width="3" style="stroke:var(--accent-3)"/>
+                  <circle cx="40" cy="36" r="10"/>
+                  <path d="M8 58 L20 46 L38 58 L56 38 L72 58" fill="none" stroke-width="2.5" style="stroke:var(--accent-3)"/>
+                </svg>
+                <p>Add your photo here &mdash; replace this slide with an img tag</p>
+              </div>
+              <div class="slide-caption">Memory Three &mdash; Replace with a caption</div>
+            </div>
+
+            <!-- Slide 4 -->
+            <div class="slide">
+              <div class="slide-placeholder">
+                <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="8" y="16" width="64" height="48" rx="6" fill="none" stroke-width="3" style="stroke:var(--accent-1)"/>
+                  <circle cx="30" cy="30" r="8"/>
+                  <path d="M8 52 L26 36 L44 50 L58 36 L72 50" fill="none" stroke-width="2.5" style="stroke:var(--accent-1)"/>
+                </svg>
+                <p>Add your photo here &mdash; replace this slide with an img tag</p>
+              </div>
+              <div class="slide-caption">Memory Four &mdash; Replace with a caption</div>
+            </div>
+
+          </div><!-- end photo track -->
+
+          <div class="slideshow-controls">
+            <button class="slide-btn" onclick="changePhotoSlide(-1)" aria-label="Previous">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="slide-btn" onclick="changePhotoSlide(1)" aria-label="Next">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="slideshow-dots" id="photoDots"></div>
+      </section>
+
+      <!-- Videos Section -->
+      <section class="section-full" style="background: var(--gradient-soft); padding: 80px 24px;">
+        <div class="section" style="padding-top: 0; padding-bottom: 0;">
+          <div class="section-heading reveal">
+            <span class="section-label">Moving pictures</span>
+            <h2 class="section-title">Videos of Us</h2>
+            <div class="section-divider"></div>
+            <p class="section-desc">Sometimes a photograph is not enough. These videos hold the moments no still image could ever fully capture.</p>
+          </div>
+
+          <div class="video-grid">
+            <!-- Video 1: Replace with actual video -->
+            <div class="video-card reveal reveal-delay-1">
+              <div class="video-placeholder">
+                <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="40" cy="40" r="30" fill="none" stroke-width="3" style="stroke:var(--accent-1)"/>
+                  <path d="M32 28 L56 40 L32 52 Z"/>
+                </svg>
+                <p>Upload your video here</p>
+              </div>
+              <div class="video-card-body">
+                <div class="video-card-title">Our First Adventure</div>
+                <div class="video-card-desc">Replace this card with a video element: &lt;video src="your-video.mp4" controls&gt;&lt;/video&gt;</div>
+              </div>
+            </div>
+
+            <!-- Video 2 -->
+            <div class="video-card reveal reveal-delay-2">
+              <div class="video-placeholder">
+                <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="40" cy="40" r="30" fill="none" stroke-width="3" style="stroke:var(--accent-2)"/>
+                  <path d="M32 28 L56 40 L32 52 Z"/>
+                </svg>
+                <p>Upload your video here</p>
+              </div>
+              <div class="video-card-body">
+                <div class="video-card-title">Laughing Together</div>
+                <div class="video-card-desc">Replace this card with a video element: &lt;video src="your-video.mp4" controls&gt;&lt;/video&gt;</div>
+              </div>
+            </div>
+
+            <!-- Video 3 -->
+            <div class="video-card reveal reveal-delay-3">
+              <div class="video-placeholder">
+                <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="40" cy="40" r="30" fill="none" stroke-width="3" style="stroke:var(--accent-3)"/>
+                  <path d="M32 28 L56 40 L32 52 Z"/>
+                </svg>
+                <p>Upload your video here</p>
+              </div>
+              <div class="video-card-body">
+                <div class="video-card-title">A Beautiful Evening</div>
+                <div class="video-card-desc">Replace this card with a video element: &lt;video src="your-video.mp4" controls&gt;&lt;/video&gt;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gallery Bottom Banner -->
+      <div class="bottom-banner">
+        <div class="bottom-banner-title">If the whole world was watching, I'd still dance with you.</div>
+        <div class="bottom-banner-sub"> ~ Nail Horan</div>
+        <div class="bottom-banner-hearts">
+          <div class="bbh"></div>
+          <div class="bbh"></div>
+          <div class="bbh"></div>
+        </div>
+      </div>
+
+    </div><!-- end GALLERY tab -->
+
+
+    <!-- ==================== POEMS TAB ==================== -->
+    <div class="tab-panel" id="panel-poems">
+
+      <section class="poem-hero">
+        <span class="section-label">Words from the deepest place</span>
+        <h1 class="section-title" style="margin-bottom:16px;">Love Poems</h1>
+        <div class="section-divider"></div>
+        <p class="section-desc">Written for no one else in this world but you. Each word, a piece of my heart.</p>
+      </section>
+
+      <section class="section">
+        <div class="poem-slideshow reveal">
+          <div class="poem-slides">
+            <div class="poem-track" id="poemTrack">
+
+              <!-- Poem 1 -->
+              <div class="poem-slide">
+                <div class="poem-number">Poem I of V</div>
+                <h2 class="poem-title">In Your Eyes</h2>
+                <div class="poem-divider"></div>
+                <div class="poem-body">In your eyes I found a universe
+I never knew existed before you,
+A galaxy of warmth and gentleness,
+A sky of every breathtaking hue.
+
+When you look at me the whole world stills,
+And every doubt inside me falls away,
+You are the calm after the storm,
+The golden light that ends my darkest day.
+
+I never understood what poets meant
+When they wrote of love that shakes the ground,
+Until the day you said my name aloud
+And I realised what I had found.</div>
+                <div class="poem-dedication">&mdash; Written with all my love, for you</div>
+              </div>
+
+              <!-- Poem 2 -->
+              <div class="poem-slide">
+                <div class="poem-number">Poem II of V</div>
+                <h2 class="poem-title">The Quiet Moments</h2>
+                <div class="poem-divider"></div>
+                <div class="poem-body">It is not always the grand gestures
+That hold the deepest meaning, love,
+It is the quiet Sunday mornings,
+The coffee shared before the world wakes up.
+
+It is your laugh at something silly,
+The way your hand fits inside mine,
+The sound of your voice in the evening,
+These simple things &mdash; all by design.
+
+For love is not the fireworks alone,
+It lives in every ordinary day,
+And in those soft, unhurried hours
+I fall for you in a thousand ways.</div>
+                <div class="poem-dedication">&mdash; For every quiet moment we share</div>
+              </div>
+
+              <!-- Poem 3 -->
+              <div class="poem-slide">
+                <div class="poem-number">Poem III of V</div>
+                <h2 class="poem-title">You Are My Home</h2>
+                <div class="poem-divider"></div>
+                <div class="poem-body">I have searched through crowded cities,
+Through mountains, shores, and open skies,
+For somewhere that felt like belonging,
+And found it in your eyes.
+
+You are the place I return to
+When the world feels cold and wide,
+You are my shelter, my stillness,
+The warmth I feel inside.
+
+Not a building nor a city,
+Not a room with walls and doors,
+But the feeling of you beside me &mdash;
+That is what I call home, what I live for.</div>
+                <div class="poem-dedication">&mdash; You are my favourite place</div>
+              </div>
+
+              <!-- Poem 4 -->
+              <div class="poem-slide">
+                <div class="poem-number">Poem IV of V</div>
+                <h2 class="poem-title">A Thousand Times Over</h2>
+                <div class="poem-divider"></div>
+                <div class="poem-body">If I were given a thousand lives
+And asked to choose again each time,
+I would find my way back to you
+Through every space and every rhyme.
+
+Across a thousand different worlds,
+In every shape and form I wear,
+My soul would recognise your soul
+And know that it belonged right there.
+
+For you are not just who I love
+In this one brief and precious life,
+You are the answer to the question
+My heart has always asked of life.</div>
+                <div class="poem-dedication">&mdash; In every life, always you</div>
+              </div>
+
+              <!-- Poem 5 -->
+              <div class="poem-slide">
+                <div class="poem-number">Poem V of V</div>
+                <h2 class="poem-title">Still</h2>
+                <div class="poem-divider"></div>
+                <div class="poem-body">When the years have turned to decades
+And our hair has gone to grey,
+I will still reach for your hand
+At the beginning of each day.
+
+I will still be lost inside your laughter,
+Still amazed that you are mine,
+Still grateful for the ordinary evenings
+Spent with you &mdash; the most extraordinary sign.
+
+For love is not a feeling that fades quietly,
+Not with you, not with what we've built,
+It only deepens, roots grow longer,
+A garden tended without guilt.
+
+I loved you then, I love you now,
+And when forever comes to call,
+I will love you still &mdash; completely,
+Most impossibly, and above all.</div>
+                <div class="poem-dedication">&mdash; Now, always, and still</div>
+              </div>
+
+            </div><!-- end poem-track -->
+          </div>
+
+          <!-- Poem Controls -->
+          <div class="poem-controls">
+            <button class="poem-btn" onclick="changePoemSlide(-1)" aria-label="Previous poem">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="poem-counter" id="poemCounter">1 / 5</div>
+            <button class="poem-btn" onclick="changePoemSlide(1)" aria-label="Next poem">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+          <div class="poem-dots" id="poemDots"></div>
+        </div>
+      </section>
+
+      <!-- Poem Bottom Banner -->
+      <div class="bottom-banner" style="margin-top: 0;">
+        <div class="bottom-banner-title">Words could never be enough &mdash; and yet still, I say them.</div>
+        <div class="bottom-banner-sub">Every poem, every line, every word &mdash; all yours.</div>
+        <div class="bottom-banner-hearts">
+          <div class="bbh"></div>
+          <div class="bbh"></div>
+          <div class="bbh"></div>
+        </div>
+      </div>
+
+    </div><!-- end POEMS tab -->
+
+  </main>
+
+  <!-- ===================== JAVASCRIPT ===================== -->
+  <script>
+    // =================== FLOATING HEARTS ===================
+    (function spawnHearts() {
+      const container = document.getElementById('heartsContainer');
+      const count = window.innerWidth < 600 ? 12 : 22;
+      for (let i = 0; i < count; i++) {
+        const h = document.createElement('div');
+        h.className = 'heart-particle';
+        h.style.left = Math.random() * 100 + 'vw';
+        h.style.animationDuration = (10 + Math.random() * 20) + 's';
+        h.style.animationDelay = (Math.random() * 20) + 's';
+        const s = 0.5 + Math.random() * 1.5;
+        h.style.transform = `scale(${s})`;
+        container.appendChild(h);
+      }
+    })();
+
+    // =================== THEME TOGGLE ===================
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('themeLabel').textContent = isDark ? 'Light' : 'Dark';
+    }
+
+    // =================== MOBILE NAV ===================
+    function toggleMobileNav() {
+      document.getElementById('mobileNav').classList.toggle('open');
+    }
+    function closeMobileNav() {
+      document.getElementById('mobileNav').classList.remove('open');
+    }
+
+    // =================== TAB SWITCHING ===================
+    const tabIds = ['home', 'gallery', 'poems'];
+    function showTab(id) {
+      tabIds.forEach(t => {
+        const panel = document.getElementById('panel-' + t);
+        const btn   = document.getElementById('tab-' + t);
+        const mob   = document.getElementById('mob-tab-' + t);
+        if (t === id) {
+          panel.classList.add('active');
+          panel.classList.add('animating-in');
+          if (btn) btn.classList.add('active');
+          if (mob) mob.classList.add('active');
+          // Remove animation class after it plays
+          setTimeout(() => panel.classList.remove('animating-in'), 600);
+          panel.style.display = 'block';
+          setTimeout(() => { panel.style.opacity = '1'; panel.style.transform = 'translateY(0)'; }, 20);
+        } else {
+          panel.classList.remove('active');
+          panel.style.opacity = '0';
+          panel.style.transform = 'translateY(20px)';
+          if (btn) btn.classList.remove('active');
+          if (mob) mob.classList.remove('active');
+          setTimeout(() => { if (!panel.classList.contains('active')) panel.style.display = 'none'; }, 400);
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(initScrollReveal, 100);
+    }
+
+    // =================== PHOTO SLIDESHOW ===================
+    let photoIndex = 0;
+    const photoTotal = 4;
+    function buildPhotoDots() {
+      const c = document.getElementById('photoDots');
+      c.innerHTML = '';
+      for (let i = 0; i < photoTotal; i++) {
+        const d = document.createElement('div');
+        d.className = 'dot' + (i === 0 ? ' active' : '');
+        d.onclick = () => goPhotoSlide(i);
+        c.appendChild(d);
+      }
+    }
+    function updatePhotoDots() {
+      document.querySelectorAll('#photoDots .dot').forEach((d, i) => {
+        d.classList.toggle('active', i === photoIndex);
+      });
+    }
+    function goPhotoSlide(n) {
+      photoIndex = n;
+      document.getElementById('photoTrack').style.transform = `translateX(-${photoIndex * 100}%)`;
+      updatePhotoDots();
+    }
+    function changePhotoSlide(dir) {
+      photoIndex = (photoIndex + dir + photoTotal) % photoTotal;
+      goPhotoSlide(photoIndex);
+    }
+    buildPhotoDots();
+
+    // Auto-advance photos
+    setInterval(() => changePhotoSlide(1), 5000);
+
+    // =================== POEM SLIDESHOW ===================
+    let poemIndex = 0;
+    const poemTotal = 5;
+    function buildPoemDots() {
+      const c = document.getElementById('poemDots');
+      c.innerHTML = '';
+      for (let i = 0; i < poemTotal; i++) {
+        const d = document.createElement('div');
+        d.className = 'dot' + (i === 0 ? ' active' : '');
+        d.onclick = () => goPoemSlide(i);
+        c.appendChild(d);
+      }
+    }
+    function updatePoemDots() {
+      document.querySelectorAll('#poemDots .dot').forEach((d, i) => {
+        d.classList.toggle('active', i === poemIndex);
+      });
+      document.getElementById('poemCounter').textContent = `${poemIndex + 1} / ${poemTotal}`;
+    }
+    function goPoemSlide(n) {
+      poemIndex = n;
+      document.getElementById('poemTrack').style.transform = `translateX(-${poemIndex * 100}%)`;
+      updatePoemDots();
+    }
+    function changePoemSlide(dir) {
+      poemIndex = (poemIndex + dir + poemTotal) % poemTotal;
+      goPoemSlide(poemIndex);
+    }
+    buildPoemDots();
+
+    // Auto-advance poems
+    setInterval(() => changePoemSlide(1), 8000);
+
+    // =================== SCROLL REVEAL ===================
+    function initScrollReveal() {
+      const items = document.querySelectorAll('.reveal, .timeline-item');
+      if (!items.length) return;
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      items.forEach(el => obs.observe(el));
+    }
+    initScrollReveal();
+
+    // =================== TOUCH/SWIPE SUPPORT ===================
+    function addSwipe(trackId, changeFn) {
+      const el = document.getElementById(trackId);
+      let startX = 0;
+      el.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+      el.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 50) changeFn(dx < 0 ? 1 : -1);
+      });
+    }
+    addSwipe('photoTrack', changePhotoSlide);
+    addSwipe('poemTrack',  changePoemSlide);
+
+    // =================== KEYBOARD NAVIGATION ===================
+    document.addEventListener('keydown', e => {
+      const activePoem = document.getElementById('panel-poems').classList.contains('active');
+      const activeGallery = document.getElementById('panel-gallery').classList.contains('active');
+      if (e.key === 'ArrowLeft')  { if (activePoem) changePoemSlide(-1); if (activeGallery) changePhotoSlide(-1); }
+      if (e.key === 'ArrowRight') { if (activePoem) changePoemSlide(1);  if (activeGallery) changePhotoSlide(1);  }
+    });
+
+    // Initial panel visibility fix
+    document.getElementById('panel-home').style.display = 'block';
+    document.getElementById('panel-gallery').style.display = 'none';
+    document.getElementById('panel-poems').style.display = 'none';
+  </script>
+
+</body>
+</html>
